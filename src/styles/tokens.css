@@ -1,0 +1,38 @@
+:root {
+  /* Dark palette */
+  --dark-500: #2e385b;
+  --dark-600: #1b2031;
+  --dark-700: #111525;
+  --dark-800: #0d101c;
+  --dark-900: #04050b;
+
+  /* Light palette */
+  --light-50: #f8f5e6;
+  --light-100: #f7efca;
+  --light-200: #e5d2ab;
+  --light-300: #d2b48c;
+  --light-400: #c4a484;
+  --light-500: #b08d57;
+  --light-600: #8b5a2b;
+
+  /* Semantic theme colors */
+  --color-background: var(--dark-900);
+  --color-surface: var(--dark-800);
+  --color-surface-soft: var(--dark-700);
+  --color-surface-elevated: var(--dark-600);
+  --color-accent: var(--dark-500);
+
+  --color-text-primary: var(--light-50);
+  --color-text-secondary: var(--light-200);
+}
+
+[data-theme="light"] {
+  --color-background: var(--light-50);
+  --color-surface: var(--light-100);
+  --color-surface-soft: var(--light-200);
+  --color-surface-elevated: var(--light-300);
+  --color-accent: var(--light-600);
+
+  --color-text-primary: var(--dark-900);
+  --color-text-secondary: var(--dark-600);
+}   
