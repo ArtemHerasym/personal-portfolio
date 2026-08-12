@@ -35,6 +35,9 @@
   --particle: rgba(193, 207, 255, 0.46);
   --name-outline: rgba(245, 243, 237, 0.78);
   --glass-shadow: 0 28px 80px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.13), inset 0 -1px 0 rgba(113, 136, 220, 0.06);
+  --hero-shadow: 0 46px 120px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.13), inset 0 -1px 0 rgba(113, 136, 220, 0.08);
+  --rise-shadow: 0 -28px 80px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  --portrait-shadow: 0 24px 70px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.13);
   --shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
   --radius-sm: 14px;
   --radius-md: 22px;
@@ -78,5 +81,8 @@
   --particle: rgba(78, 57, 34, 0.3);
   --name-outline: rgba(17, 21, 37, 0.76);
   --glass-shadow: 0 28px 80px rgba(73, 54, 31, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(107, 86, 62, 0.08);
+  --hero-shadow: 0 42px 105px rgba(73, 54, 31, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.74), inset 0 -1px 0 rgba(107, 86, 62, 0.08);
+  --rise-shadow: 0 -20px 64px rgba(73, 54, 31, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+  --portrait-shadow: 0 22px 58px rgba(73, 54, 31, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   --shadow: 0 28px 80px rgba(73, 54, 31, 0.15);
 }
