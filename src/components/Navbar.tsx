@@ -1,22 +1,64 @@
+import { motion, useReducedMotion } from 'motion/react'
 import type { Theme } from '../types'
 
 const links = ['Home', 'About', 'Experience', 'Gallery', 'Contact']
 
-export function Navbar({ activeSection, theme, onThemeChange }: { activeSection: string; theme: Theme; onThemeChange: () => void }) {
+export function Navbar({
+  activeSection,
+  theme,
+  onNavigate,
+  onThemeChange,
+}: {
+  activeSection: string
+  theme: Theme
+  onNavigate: (section: string) => void
+  onThemeChange: () => void
+}) {
+  const reduceMotion = useReducedMotion()
+
   return (
-    <header className="nav-wrap">
+    <motion.header className="nav-wrap" layoutRoot>
       <nav className="glass-nav" aria-label="Main navigation">
-        <a className="nav-mark" href="#home" aria-label="Artem Herasymenko, home">AH</a>
+        <a
+          className="nav-mark"
+          href="#home"
+          aria-label="Artem Herasymenko, home"
+          onClick={(event) => {
+            if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onNavigate('home')
+          }}
+        >AH</a>
         <div className="nav-links">
           {links.map((label) => {
             const id = label.toLowerCase()
-            return <a key={id} className={activeSection === id ? 'active' : ''} href={`#${id}`}>{label}</a>
+            const isActive = activeSection === id
+            return (
+              <a
+                key={id}
+                className={isActive ? 'active' : ''}
+                href={`#${id}`}
+                aria-current={isActive ? 'location' : undefined}
+                onClick={(event) => {
+                  if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onNavigate(id)
+                }}
+              >
+                {isActive && (
+                  <motion.span
+                    className="nav-active-pill"
+                    layoutId="nav-active-pill"
+                    initial={false}
+                    aria-hidden="true"
+                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 520, damping: 42, mass: 0.62 }}
+                  />
+                )}
+                <span className="nav-label">{label}</span>
+              </a>
+            )
           })}
         </div>
-        <button className="theme-toggle" onClick={onThemeChange} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+        <button type="button" className="theme-toggle" onClick={onThemeChange} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
           <span aria-hidden="true">{theme === 'dark' ? '☼' : '◐'}</span>
         </button>
       </nav>
-    </header>
+    </motion.header>
   )
 }

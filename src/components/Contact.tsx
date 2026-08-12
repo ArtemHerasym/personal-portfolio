@@ -4,7 +4,6 @@ import { Reveal } from './Reveal'
 export function Contact({ transition }: { transition: Transition }) {
   return (
     <footer className="contact" id="contact" aria-labelledby="contact-title">
-      <div className="contact-orbit" aria-hidden="true" />
       <Reveal className="contact-content" transition={transition}>
         <p className="section-kicker">Let’s build something thoughtful</p>
         <h2 id="contact-title">Find me online.</h2>

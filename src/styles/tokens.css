@@ -1,4 +1,6 @@
 :root {
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-ui: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --graphite: #04050b;
   --night: #0d101c;
   --ink: #111525;
@@ -11,22 +13,32 @@
   --lion: #b59975;
   --bg: var(--graphite);
   --bg-soft: var(--night);
-  --panel: #101422;
-  --panel-2: #171c2d;
+  --panel: var(--ink);
+  --panel-2: var(--deep-ink);
   --text: #f5f3ed;
-  --muted: #9aa2b8;
-  --faint: #677087;
-  --accent: #8d78ff;
-  --accent-2: #5668c9;
+  --muted: #a2abc1;
+  --faint: #707b96;
+  --accent: #7188dc;
+  --accent-2: var(--twilight);
+  --ambient: var(--twilight);
   --border: rgba(226, 230, 255, 0.12);
   --border-strong: rgba(226, 230, 255, 0.22);
-  --glass: rgba(18, 22, 36, 0.72);
+  --glass: rgba(13, 16, 28, 0.76);
   --shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
   --radius-sm: 14px;
   --radius-md: 22px;
   --radius-lg: 34px;
   --radius-xl: 52px;
-  --max-width: 1240px;
+  --max-width: 1180px;
+  --page-gutter: clamp(24px, 4.5vw, 64px);
+  --section-space: clamp(96px, 8vw, 116px);
+  --type-display: clamp(4rem, 9.4vw, 8.6rem);
+  --type-section: clamp(2.7rem, 4.8vw, 4.7rem);
+  --type-card-title: clamp(2.25rem, 3.7vw, 3.8rem);
+  --type-body: 1rem;
+  --type-label: 0.76rem;
+  --weight-display: 400;
+  --weight-label: 600;
   --ease: cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -40,6 +52,7 @@
   --faint: #817d73;
   --accent: #6b563e;
   --accent-2: #977654;
+  --ambient: #6b563e;
   --border: rgba(78, 57, 34, 0.14);
   --border-strong: rgba(78, 57, 34, 0.23);
   --glass: rgba(248, 245, 230, 0.75);

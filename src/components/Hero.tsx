@@ -6,7 +6,7 @@ export function Hero({ transition }: { transition: Transition }) {
     <section className="hero" id="home" aria-labelledby="hero-title">
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
-      <div className="hero-orbit" aria-hidden="true"><span /><span /><span /></div>
+      <div className="hero-orbit" aria-hidden="true" />
       <motion.div className="hero-copy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={transition}>
         <p className="eyebrow">Hello, I’m</p>
         <h1 id="hero-title">Artem<br /><span>Herasymenko</span></h1>
