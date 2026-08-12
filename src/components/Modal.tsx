@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Certificate, Project, Transition } from '../types'
 
 function isProject(item: Project | Certificate): item is Project {
@@ -24,7 +24,6 @@ export function Modal({
   onClose: () => void
   transition: Transition
 }) {
-  const [slide, setSlide] = useState(0)
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
@@ -34,11 +33,6 @@ export function Modal({
   useEffect(() => {
     onCloseRef.current = onClose
   }, [onClose])
-
-  useEffect(() => {
-    if (!selected) return
-    setSlide(0)
-  }, [selected])
 
   useEffect(() => {
     if (!isOpen) return
@@ -114,13 +108,8 @@ export function Modal({
             {isProject(selected) ? (
               <>
                 <div className={`modal-media ${selected.accent}`}>
-                  <span aria-live="polite">Project preview {slide + 1}</span>
-                  <div className="modal-art" aria-hidden="true"><i /><i /></div>
-                  <div className="media-controls">
-                    <button type="button" onClick={() => setSlide((slide + 2) % 3)} aria-label="Previous image">←</button>
-                    <p>{slide + 1} / 3</p>
-                    <button type="button" onClick={() => setSlide((slide + 1) % 3)} aria-label="Next image">→</button>
-                  </div>
+                  <span>Project preview</span>
+                  <div className="modal-art" aria-hidden="true"><i /></div>
                 </div>
                 <div className="modal-details">
                   <p className="section-kicker">{selected.kind}</p>
@@ -130,8 +119,8 @@ export function Modal({
                   <p>{selected.contribution}</p>
                   <h3>Toolkit</h3>
                   <div className="tag-row">{selected.technologies.map((tech) => <span key={tech}>{tech}</span>)}</div>
-                  <button className="primary-button disabled" type="button" disabled={selected.linkLabel === 'Coming soon'}>
-                    {selected.linkLabel} <span aria-hidden="true">↗</span>
+                  <button className="primary-button disabled" type="button" disabled>
+                    {selected.linkLabel === 'Coming soon' ? 'Coming soon' : 'Project link coming soon'} <span aria-hidden="true">↗</span>
                   </button>
                 </div>
               </>

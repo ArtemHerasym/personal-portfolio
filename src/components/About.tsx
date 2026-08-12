@@ -19,8 +19,8 @@ export function About({ transition }: { transition: Transition }) {
         </Reveal>
         <Reveal className="portrait-wrap" transition={transition}>
           <div className="portrait-placeholder">
-            <img src={heroArt} alt="Abstract layered technology illustration used as a portrait placeholder" />
-            <span>Portrait placeholder</span>
+            <img src={heroArt} alt="" />
+            <span>Design × Development</span>
           </div>
           <aside className="personal-note"><span>Currently</span><p>Learning, building, and looking for the next meaningful challenge.</p></aside>
         </Reveal>

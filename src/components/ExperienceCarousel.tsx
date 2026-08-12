@@ -42,8 +42,9 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
           <div className="experience-shell" tabIndex={0} role="region" aria-roledescription="carousel" aria-label="Experience carousel. Use arrow keys to navigate.">
             <AnimatePresence mode="wait" initial={false}>
               <motion.article key={active} className="experience-card" initial={{ opacity: 0, x: 55 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -55 }} transition={transition}>
-                <div className={`experience-visual ${item.accent}`}>
-                  <p>Image placeholder</p>
+                <div className={`experience-visual ${item.accent}`} aria-hidden="true">
+                  <span className="experience-number" aria-hidden="true">{String(active + 1).padStart(2, '0')}</span>
+                  <p>{item.eyebrow}</p>
                 </div>
                 <div className="experience-copy">
                   <p className="eyebrow">{item.eyebrow}</p>

@@ -103,7 +103,7 @@ export function Gallery({ transition }: { transition: Transition }) {
                       key={project.title}
                       onClick={() => setSelected(project)}
                     >
-                      <span className="project-art" aria-hidden="true"><i /><i /></span>
+                      <span className="project-art" aria-hidden="true"><i /></span>
                       <span className="project-meta"><small>{project.kind}</small><strong>{project.title}</strong></span>
                       <span className="card-arrow" aria-hidden="true">↗</span>
                     </button>

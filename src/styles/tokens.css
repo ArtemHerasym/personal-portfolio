@@ -23,7 +23,18 @@
   --ambient: var(--twilight);
   --border: rgba(226, 230, 255, 0.12);
   --border-strong: rgba(226, 230, 255, 0.22);
-  --glass: rgba(13, 16, 28, 0.76);
+  --glass: rgba(13, 16, 28, 0.78);
+  --glass-soft: rgba(17, 21, 37, 0.56);
+  --glass-strong: rgba(13, 16, 28, 0.78);
+  --glass-edge: rgba(226, 230, 255, 0.18);
+  --glass-highlight: rgba(255, 255, 255, 0.14);
+  --glass-highlight-soft: rgba(164, 184, 255, 0.07);
+  --glass-selected: rgba(255, 255, 255, 0.085);
+  --control-fill: rgba(255, 255, 255, 0.065);
+  --control-fill-hover: rgba(255, 255, 255, 0.11);
+  --particle: rgba(193, 207, 255, 0.46);
+  --name-outline: rgba(245, 243, 237, 0.78);
+  --glass-shadow: 0 28px 80px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.13), inset 0 -1px 0 rgba(113, 136, 220, 0.06);
   --shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
   --radius-sm: 14px;
   --radius-md: 22px;
@@ -55,6 +66,17 @@
   --ambient: #6b563e;
   --border: rgba(78, 57, 34, 0.14);
   --border-strong: rgba(78, 57, 34, 0.23);
-  --glass: rgba(248, 245, 230, 0.75);
+  --glass: rgba(248, 245, 230, 0.82);
+  --glass-soft: rgba(248, 245, 230, 0.68);
+  --glass-strong: rgba(248, 245, 230, 0.84);
+  --glass-edge: rgba(78, 57, 34, 0.18);
+  --glass-highlight: rgba(255, 255, 255, 0.72);
+  --glass-highlight-soft: rgba(255, 255, 255, 0.38);
+  --glass-selected: rgba(78, 57, 34, 0.08);
+  --control-fill: rgba(78, 57, 34, 0.06);
+  --control-fill-hover: rgba(78, 57, 34, 0.1);
+  --particle: rgba(78, 57, 34, 0.3);
+  --name-outline: rgba(17, 21, 37, 0.76);
+  --glass-shadow: 0 28px 80px rgba(73, 54, 31, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(107, 86, 62, 0.08);
   --shadow: 0 28px 80px rgba(73, 54, 31, 0.15);
 }
