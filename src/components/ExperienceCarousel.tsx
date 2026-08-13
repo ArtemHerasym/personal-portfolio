@@ -4,15 +4,19 @@ import { experiences } from '../data'
 import type { Transition } from '../types'
 import { Reveal } from './Reveal'
 
+const swipeThreshold = 52
+const carouselEase = [0.22, 1, 0.36, 1] as const
+
 export function ExperienceCarousel({ transition }: { transition: Transition }) {
   const [active, setActive] = useState(0)
+  const [direction, setDirection] = useState(1)
   const reduceMotion = useReducedMotion()
   const item = experiences[active]
   const slotWidth = 100 / experiences.length
-  const move = useCallback(
-    (delta: number) => setActive((index) => (index + delta + experiences.length) % experiences.length),
-    [],
-  )
+  const move = useCallback((delta: number) => {
+    setDirection(delta < 0 ? -1 : 1)
+    setActive((index) => (index + delta + experiences.length) % experiences.length)
+  }, [])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -31,6 +35,10 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [move])
 
+  const itemTransition = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.24, ease: carouselEase }
+
   return (
     <section className="experience" id="experience" aria-labelledby="experience-title">
       <div className="section-inner">
@@ -39,19 +47,49 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
           <p>Places where I’ve learned by doing, collaborating, and showing up with curiosity.</p>
         </Reveal>
         <Reveal transition={transition}>
-          <div className="experience-shell" tabIndex={0} role="region" aria-roledescription="carousel" aria-label="Experience carousel. Use arrow keys to navigate.">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.article key={active} className="experience-card" initial={{ opacity: 0, x: 55 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -55 }} transition={transition}>
-                <div className={`experience-visual ${item.accent}`} aria-hidden="true">
-                  <span className="experience-number" aria-hidden="true">{String(active + 1).padStart(2, '0')}</span>
-                  <p>{item.eyebrow}</p>
+          <div className="experience-shell" tabIndex={0} role="region" aria-roledescription="carousel" aria-label="Experience carousel. Swipe or use arrow keys to navigate.">
+            <AnimatePresence mode="wait" initial={false} custom={direction}>
+              <motion.article
+                key={active}
+                custom={direction}
+                className="experience-card"
+                variants={{
+                  enter: (travelDirection: number) => ({
+                    opacity: reduceMotion ? 1 : 0,
+                    x: reduceMotion ? 0 : travelDirection * 16,
+                  }),
+                  center: { opacity: 1, x: 0 },
+                  exit: (travelDirection: number) => ({
+                    opacity: reduceMotion ? 1 : 0,
+                    x: reduceMotion ? 0 : travelDirection * -16,
+                  }),
+                }}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={itemTransition}
+                onPanEnd={(_, info) => {
+                  const horizontalTravel = Math.abs(info.offset.x)
+                  const verticalTravel = Math.abs(info.offset.y)
+                  if (horizontalTravel < swipeThreshold || horizontalTravel <= verticalTravel * 1.2) return
+                  move(info.offset.x < 0 ? 1 : -1)
+                }}
+                style={{ touchAction: 'pan-y' }}
+              >
+                <div className={`experience-visual ${item.accent}`}>
+                  <span className="experience-placeholder-label">Photo coming soon</span>
                 </div>
-                <div className="experience-copy">
+                <motion.div
+                  className="experience-copy"
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 0.26, delay: 0.035, ease: carouselEase }}
+                >
                   <p className="eyebrow">{item.eyebrow}</p>
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
                   <div className="tag-row">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                </div>
+                </motion.div>
               </motion.article>
             </AnimatePresence>
             <div className="carousel-controls">
@@ -68,7 +106,7 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
                   initial={false}
                   animate={{ left: `${active * slotWidth}%` }}
                   style={{ width: `${slotWidth}%` }}
-                  transition={reduceMotion ? { duration: 0 } : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 0.28, ease: carouselEase }}
                 />
               </div>
               <p className="sr-only" aria-live="polite">Experience {active + 1} of {experiences.length}: {item.title}</p>

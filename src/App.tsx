@@ -6,14 +6,23 @@ import { ExperienceCarousel } from './components/ExperienceCarousel'
 import { Gallery } from './components/Gallery'
 import { Hero } from './components/Hero'
 import { Navbar } from './components/Navbar'
+import { motionDuration, motionEase } from './motion'
 import type { Theme } from './types'
 
 const sections = ['home', 'about', 'experience', 'gallery', 'contact'] as const
 
+function getInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'dark'
+
+  try {
+    return window.localStorage.getItem('portfolio-theme') === 'light' ? 'light' : 'dark'
+  } catch {
+    return 'dark'
+  }
+}
+
 function App() {
-  const [theme, setTheme] = useState<Theme>(() =>
-    localStorage.getItem('portfolio-theme') === 'light' ? 'light' : 'dark',
-  )
+  const [theme, setTheme] = useState<Theme>(getInitialTheme)
   const [activeSection, setActiveSection] = useState('home')
   const reduceMotion = useReducedMotion()
   const pendingSection = useRef<string | null>(null)
@@ -43,7 +52,11 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    localStorage.setItem('portfolio-theme', theme)
+    try {
+      window.localStorage.setItem('portfolio-theme', theme)
+    } catch {
+      // Storage may be unavailable in restricted or privacy-focused browser contexts.
+    }
     document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute(
       'content',
       theme === 'dark' ? '#04050b' : '#f8f5e6',
@@ -92,7 +105,7 @@ function App() {
   }, [findCurrentSection])
 
   const transition = useMemo(
-    () => (reduceMotion ? { duration: 0 } : { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }),
+    () => (reduceMotion ? { duration: 0 } : { duration: motionDuration.reveal, ease: motionEase }),
     [reduceMotion],
   )
 

@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import type { Certificate, Project, Transition } from '../types'
 
 function isProject(item: Project | Certificate): item is Project {
@@ -15,6 +16,16 @@ const focusableSelector = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',')
 
+type PageState = {
+  root: HTMLElement | null
+  rootHadInert: boolean
+  rootAriaHidden: string | null
+  htmlHadModalOpen: boolean
+  bodyHadModalOpen: boolean
+}
+
+const modalEase = [0.22, 1, 0.36, 1] as const
+
 export function Modal({
   selected,
   onClose,
@@ -27,20 +38,64 @@ export function Modal({
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
+  const pageStateRef = useRef<PageState | null>(null)
   const onCloseRef = useRef(onClose)
   const isOpen = selected !== null
+  const isOpenRef = useRef(isOpen)
+  isOpenRef.current = isOpen
 
   useEffect(() => {
     onCloseRef.current = onClose
   }, [onClose])
 
+  const lockPage = useCallback(() => {
+    if (pageStateRef.current) return
+
+    const root = document.getElementById('root')
+    pageStateRef.current = {
+      root,
+      rootHadInert: root?.hasAttribute('inert') ?? false,
+      rootAriaHidden: root?.getAttribute('aria-hidden') ?? null,
+      htmlHadModalOpen: document.documentElement.classList.contains('modal-open'),
+      bodyHadModalOpen: document.body.classList.contains('modal-open'),
+    }
+
+    root?.setAttribute('inert', '')
+    root?.setAttribute('aria-hidden', 'true')
+    document.documentElement.classList.add('modal-open')
+    document.body.classList.add('modal-open')
+  }, [])
+
+  const releasePage = useCallback(() => {
+    const pageState = pageStateRef.current
+    if (!pageState) return
+
+    if (pageState.root) {
+      if (pageState.rootHadInert) pageState.root.setAttribute('inert', '')
+      else pageState.root.removeAttribute('inert')
+
+      if (pageState.rootAriaHidden === null) pageState.root.removeAttribute('aria-hidden')
+      else pageState.root.setAttribute('aria-hidden', pageState.rootAriaHidden)
+    }
+
+    if (!pageState.htmlHadModalOpen) document.documentElement.classList.remove('modal-open')
+    if (!pageState.bodyHadModalOpen) document.body.classList.remove('modal-open')
+    pageStateRef.current = null
+
+    const returnTarget = returnFocusRef.current
+    returnFocusRef.current = null
+    if (returnTarget?.isConnected) returnTarget.focus({ preventScroll: true })
+  }, [])
+
   useEffect(() => {
     if (!isOpen) return
 
-    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    document.documentElement.classList.add('modal-open')
-    document.body.classList.add('modal-open')
-    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus())
+    if (!pageStateRef.current) {
+      returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    }
+
+    closeButtonRef.current?.focus({ preventScroll: true })
+    lockPage()
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -53,7 +108,7 @@ export function Modal({
       const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(focusableSelector) ?? [])
       if (!focusable.length) {
         event.preventDefault()
-        dialogRef.current?.focus()
+        dialogRef.current?.focus({ preventScroll: true })
         return
       }
 
@@ -69,18 +124,21 @@ export function Modal({
     }
 
     window.addEventListener('keydown', onKey)
-    return () => {
-      window.cancelAnimationFrame(focusFrame)
-      document.documentElement.classList.remove('modal-open')
-      document.body.classList.remove('modal-open')
-      window.removeEventListener('keydown', onKey)
-      returnFocusRef.current?.focus()
-      returnFocusRef.current = null
-    }
-  }, [isOpen])
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isOpen, lockPage])
 
-  return (
-    <AnimatePresence>
+  useEffect(() => () => releasePage(), [releasePage])
+
+  const reducedMotion = transition.duration === 0
+  const backdropTransition = reducedMotion ? { duration: 0 } : { duration: 0.18, ease: modalEase }
+  const dialogTransition = reducedMotion ? { duration: 0 } : { duration: 0.26, ease: modalEase }
+
+  return createPortal(
+    <AnimatePresence
+      onExitComplete={() => {
+        if (!isOpenRef.current) releasePage()
+      }}
+    >
       {selected && (
         <motion.div
           className="modal-backdrop"
@@ -89,7 +147,7 @@ export function Modal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={transition}
+          transition={backdropTransition}
         >
           <motion.div
             ref={dialogRef}
@@ -99,17 +157,16 @@ export function Modal({
             aria-labelledby="modal-title"
             aria-describedby={isProject(selected) ? 'modal-description' : 'certificate-description'}
             tabIndex={-1}
-            initial={{ opacity: 0, y: 35, scale: .97 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.992 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: .98 }}
-            transition={transition}
+            exit={reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.995 }}
+            transition={dialogTransition}
           >
             <button ref={closeButtonRef} type="button" className="modal-close" onClick={onClose} aria-label="Close dialog">×</button>
             {isProject(selected) ? (
               <>
-                <div className={`modal-media ${selected.accent}`}>
-                  <span>Project preview</span>
-                  <div className="modal-art" aria-hidden="true"><i /></div>
+                <div className={`modal-media ${selected.accent}`} role="img" aria-label={`Media placeholder for ${selected.title}`}>
+                  <span>Project media coming soon</span>
                 </div>
                 <div className="modal-details">
                   <p className="section-kicker">{selected.kind}</p>
@@ -126,19 +183,19 @@ export function Modal({
               </>
             ) : (
               <div className="certificate-view">
-                <div className={`certificate-paper ${selected.accent}`}>
-                  <span className="certificate-seal large" aria-hidden="true">AH</span>
-                  <p>Certificate of completion</p>
-                  <h2 id="modal-title">{selected.title}</h2>
-                  <span>{selected.issuer}</span>
-                  <b>{selected.year}</b>
+                <div className={`certificate-paper certificate-placeholder ${selected.accent}`}>
+                  <p className="certificate-placeholder-label">Certificate image coming soon</p>
                 </div>
-                <p id="certificate-description">This is a layout placeholder. A high-resolution certificate image will replace it later.</p>
+                <div className="certificate-placeholder-meta">
+                  <h2 id="modal-title">{selected.title}</h2>
+                  <p id="certificate-description">{selected.issuer} <span aria-hidden="true">·</span> {selected.year}</p>
+                </div>
               </div>
             )}
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

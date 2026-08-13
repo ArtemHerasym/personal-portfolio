@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { motionDuration, motionEase } from '../motion'
 import type { Theme } from '../types'
 
 const links = ['Home', 'About', 'Experience', 'Gallery', 'Contact']
@@ -47,7 +48,7 @@ export function Navbar({
                     layoutId="nav-active-pill"
                     initial={false}
                     aria-hidden="true"
-                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 520, damping: 42, mass: 0.62 }}
+                    transition={reduceMotion ? { duration: 0 } : { duration: motionDuration.interface, ease: motionEase }}
                   />
                 )}
                 <span className="nav-label">{label}</span>

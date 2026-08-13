@@ -1,6 +1,7 @@
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react'
 import { useCallback, useRef, useState, type KeyboardEvent } from 'react'
 import { certificates, projects, skillGroups } from '../data'
+import { motionDuration, motionEase } from '../motion'
 import type { Certificate, Project, Transition } from '../types'
 import { Modal } from './Modal'
 import { Reveal } from './Reveal'
@@ -14,6 +15,9 @@ export function Gallery({ transition }: { transition: Transition }) {
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const reduceMotion = useReducedMotion()
   const closeModal = useCallback(() => setSelected(null), [])
+  const itemTransition = (index: number) => reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.4, delay: index * 0.055, ease: motionEase }
 
   const activateTab = (index: number) => {
     const nextIndex = (index + galleryTabs.length) % galleryTabs.length
@@ -67,7 +71,7 @@ export function Gallery({ transition }: { transition: Transition }) {
                         layoutId="gallery-active-pill"
                         initial={false}
                         aria-hidden="true"
-                        transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 520, damping: 42, mass: 0.62 }}
+                        transition={reduceMotion ? { duration: 0 } : { duration: motionDuration.interface, ease: motionEase }}
                       />
                     )}
                     <span className="gallery-tab-label">{name}</span>
@@ -90,50 +94,65 @@ export function Gallery({ transition }: { transition: Transition }) {
               className="gallery-content"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={transition}
+              exit={{ opacity: 0, y: -8 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: motionDuration.interface, ease: motionEase }}
             >
               {tab === 'Projects' && (
                 <div className="project-grid">
-                  {projects.map((project) => (
-                    <button
+                  {projects.map((project, index) => (
+                    <motion.button
                       type="button"
                       aria-haspopup="dialog"
                       className={`project-card ${project.accent}`}
                       key={project.title}
                       onClick={() => setSelected(project)}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.16 }}
+                      transition={itemTransition(index)}
                     >
-                      <span className="project-art" aria-hidden="true"><i /></span>
+                      <span className="project-placeholder-label" aria-hidden="true">Project image coming soon</span>
                       <span className="project-meta"><small>{project.kind}</small><strong>{project.title}</strong></span>
                       <span className="card-arrow" aria-hidden="true">↗</span>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               )}
               {tab === 'Certificates' && (
                 <div className="certificate-grid">
-                  {certificates.map((certificate) => (
-                    <button
+                  {certificates.map((certificate, index) => (
+                    <motion.button
                       type="button"
                       aria-haspopup="dialog"
                       key={certificate.title}
                       className={`certificate-card ${certificate.accent}`}
                       onClick={() => setSelected(certificate)}
+                      initial={{ opacity: 0, y: 14 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.16 }}
+                      transition={itemTransition(index)}
                     >
-                      <span className="certificate-seal" aria-hidden="true">AH</span>
+                      <span className="certificate-preview" aria-hidden="true" />
                       <span><small>{certificate.issuer}</small><strong>{certificate.title}</strong><em>{certificate.year}</em></span>
                       <b>View <span aria-hidden="true">↗</span></b>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               )}
               {tab === 'Skills' && (
                 <div className="skills-list">
-                  {skillGroups.map((group) => (
-                    <div className="skill-row" key={group.name}>
+                  {skillGroups.map((group, index) => (
+                    <motion.div
+                      className="skill-row"
+                      key={group.name}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={itemTransition(index)}
+                    >
                       <h3>{group.name}</h3>
                       <div>{group.skills.map((skill) => <span key={skill}>{skill}</span>)}</div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               )}

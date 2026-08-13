@@ -1,4 +1,3 @@
-import heroArt from '../assets/hero.png'
 import type { Transition } from '../types'
 import { Reveal } from './Reveal'
 
@@ -18,9 +17,8 @@ export function About({ transition }: { transition: Transition }) {
           </dl>
         </Reveal>
         <Reveal className="portrait-wrap" transition={transition}>
-          <div className="portrait-placeholder">
-            <img src={heroArt} alt="" />
-            <span>Design × Development</span>
+          <div className="portrait-placeholder" role="img" aria-label="Portrait placeholder. Portrait coming soon.">
+            <span>Portrait coming soon</span>
           </div>
           <aside className="personal-note"><span>Currently</span><p>Learning, building, and looking for the next meaningful challenge.</p></aside>
         </Reveal>

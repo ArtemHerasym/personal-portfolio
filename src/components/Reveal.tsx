@@ -6,9 +6,9 @@ export function Reveal({ children, className = '', transition }: PropsWithChildr
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.18 }}
+      viewport={{ once: true, amount: 0.14 }}
       transition={transition}
     >
       {children}
