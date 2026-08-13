@@ -1,11 +1,11 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useCallback, useEffect, useState } from 'react'
 import { experiences } from '../data'
+import { motionDuration, motionEase } from '../motion'
 import type { Transition } from '../types'
 import { Reveal } from './Reveal'
 
 const swipeThreshold = 52
-const carouselEase = [0.22, 1, 0.36, 1] as const
 
 export function ExperienceCarousel({ transition }: { transition: Transition }) {
   const [active, setActive] = useState(0)
@@ -37,7 +37,7 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
 
   const itemTransition = reduceMotion
     ? { duration: 0 }
-    : { duration: 0.24, ease: carouselEase }
+    : { duration: motionDuration.carousel, ease: motionEase }
 
   return (
     <section className="experience" id="experience" aria-labelledby="experience-title">
@@ -48,50 +48,52 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
         </Reveal>
         <Reveal transition={transition}>
           <div className="experience-shell" tabIndex={0} role="region" aria-roledescription="carousel" aria-label="Experience carousel. Swipe or use arrow keys to navigate.">
-            <AnimatePresence mode="wait" initial={false} custom={direction}>
-              <motion.article
-                key={active}
-                custom={direction}
-                className="experience-card"
-                variants={{
-                  enter: (travelDirection: number) => ({
-                    opacity: reduceMotion ? 1 : 0,
-                    x: reduceMotion ? 0 : travelDirection * 16,
-                  }),
-                  center: { opacity: 1, x: 0 },
-                  exit: (travelDirection: number) => ({
-                    opacity: reduceMotion ? 1 : 0,
-                    x: reduceMotion ? 0 : travelDirection * -16,
-                  }),
-                }}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={itemTransition}
-                onPanEnd={(_, info) => {
-                  const horizontalTravel = Math.abs(info.offset.x)
-                  const verticalTravel = Math.abs(info.offset.y)
-                  if (horizontalTravel < swipeThreshold || horizontalTravel <= verticalTravel * 1.2) return
-                  move(info.offset.x < 0 ? 1 : -1)
-                }}
-                style={{ touchAction: 'pan-y' }}
-              >
-                <div className={`experience-visual ${item.accent}`}>
-                  <span className="experience-placeholder-label">Photo coming soon</span>
-                </div>
-                <motion.div
-                  className="experience-copy"
-                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={reduceMotion ? { duration: 0 } : { duration: 0.26, delay: 0.035, ease: carouselEase }}
+            <div className="experience-stage">
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.article
+                  key={active}
+                  custom={direction}
+                  className="experience-card"
+                  variants={{
+                    enter: (travelDirection: number) => ({
+                      opacity: reduceMotion ? 1 : 0,
+                      x: reduceMotion ? 0 : travelDirection * 14,
+                    }),
+                    center: { opacity: 1, x: 0 },
+                    exit: (travelDirection: number) => ({
+                      opacity: reduceMotion ? 1 : 0,
+                      x: reduceMotion ? 0 : travelDirection * -10,
+                    }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={itemTransition}
+                  onPanEnd={(_, info) => {
+                    const horizontalTravel = Math.abs(info.offset.x)
+                    const verticalTravel = Math.abs(info.offset.y)
+                    if (horizontalTravel < swipeThreshold || horizontalTravel <= verticalTravel * 1.2) return
+                    move(info.offset.x < 0 ? 1 : -1)
+                  }}
+                  style={{ touchAction: 'pan-y' }}
                 >
-                  <p className="eyebrow">{item.eyebrow}</p>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                  <div className="tag-row">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                </motion.div>
-              </motion.article>
-            </AnimatePresence>
+                  <div className={`experience-visual ${item.accent}`}>
+                    <span className="experience-placeholder-label">Photo coming soon</span>
+                  </div>
+                  <motion.div
+                    className="experience-copy"
+                    initial={reduceMotion ? false : { opacity: 0, x: direction * 8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={reduceMotion ? { duration: 0 } : { duration: motionDuration.modal, delay: 0.055, ease: motionEase }}
+                  >
+                    <p className="eyebrow">{item.eyebrow}</p>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                    <div className="tag-row">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                  </motion.div>
+                </motion.article>
+              </AnimatePresence>
+            </div>
             <div className="carousel-controls">
               <div
                 className="carousel-progress"
@@ -106,7 +108,7 @@ export function ExperienceCarousel({ transition }: { transition: Transition }) {
                   initial={false}
                   animate={{ left: `${active * slotWidth}%` }}
                   style={{ width: `${slotWidth}%` }}
-                  transition={reduceMotion ? { duration: 0 } : { duration: 0.28, ease: carouselEase }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: motionDuration.interface, ease: motionEase }}
                 />
               </div>
               <p className="sr-only" aria-live="polite">Experience {active + 1} of {experiences.length}: {item.title}</p>

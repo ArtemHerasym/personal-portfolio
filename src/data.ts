@@ -1,4 +1,11 @@
-import type { Certificate, Project } from './types'
+import type { Certificate, Project, ProjectMedia, SkillGroup } from './types'
+
+function placeholderMedia(projectId: string): ProjectMedia[] {
+  return [1, 2, 3].map((position) => ({
+    id: `${projectId}-media-${position}`,
+    label: `Project image ${position}`,
+  }))
+}
 
 export const experiences = [
   {
@@ -38,6 +45,7 @@ export const projects: Project[] = [
     description: 'A web application that makes basketball performance data easier to explore, compare, and communicate.',
     contribution: 'Product thinking, interface design, and front-end development. Detailed project notes will be added in the next content pass.',
     technologies: ['React', 'TypeScript', 'Data visualization'],
+    media: placeholderMedia('courtstats'),
     accent: 'court',
     linkLabel: 'View project',
   },
@@ -47,6 +55,7 @@ export const projects: Project[] = [
     description: 'A meal-planning concept designed to help students turn a few available ingredients into practical dorm-friendly meals.',
     contribution: 'Collaborative ideation and prototype development during a hackathon. Final repository and story are coming soon.',
     technologies: ['Web app', 'Rapid prototyping', 'UX'],
+    media: placeholderMedia('dormchef'),
     accent: 'chef',
     linkLabel: 'View project',
   },
@@ -56,6 +65,7 @@ export const projects: Project[] = [
     description: 'A temporary home for motion design explorations, animated identities, and visual storytelling experiments.',
     contribution: 'This card is intentionally temporary and will be replaced with a finished case study.',
     technologies: ['After Effects', 'Motion design'],
+    media: placeholderMedia('motion-studies'),
     accent: 'motion',
     linkLabel: 'Coming soon',
   },
@@ -67,9 +77,41 @@ export const certificates: Certificate[] = [
   { title: 'Leadership & Service', issuer: 'Certificate placeholder', year: 'Coming soon', accent: 'amber' },
 ]
 
-export const skillGroups = [
-  { name: 'Programming', skills: ['Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript'] },
-  { name: 'Tools', skills: ['Git', 'Figma', 'Canva', 'After Effects'] },
-  { name: 'Soft skills', skills: ['Teamwork', 'Communication', 'Leadership', 'Problem solving'] },
-  { name: 'Languages', skills: ['Ukrainian', 'English', 'Spanish'] },
+export const skillGroups: SkillGroup[] = [
+  {
+    name: 'Programming',
+    skills: [
+      { name: 'Python', icon: 'python' },
+      { name: 'HTML', icon: 'html' },
+      { name: 'CSS', icon: 'css' },
+      { name: 'JavaScript', icon: 'javascript' },
+      { name: 'TypeScript', icon: 'typescript' },
+    ],
+  },
+  {
+    name: 'Tools',
+    skills: [
+      { name: 'Git', icon: 'git' },
+      { name: 'Figma', icon: 'figma' },
+      { name: 'Canva', icon: 'canva' },
+      { name: 'After Effects', icon: 'after-effects' },
+    ],
+  },
+  {
+    name: 'Soft skills',
+    skills: [
+      { name: 'Teamwork', icon: 'teamwork' },
+      { name: 'Communication', icon: 'communication' },
+      { name: 'Leadership', icon: 'leadership' },
+      { name: 'Problem solving', icon: 'problem-solving' },
+    ],
+  },
+  {
+    name: 'Languages',
+    skills: [
+      { name: 'Ukrainian', icon: 'ukrainian' },
+      { name: 'English', icon: 'english' },
+      { name: 'Spanish', icon: 'spanish' },
+    ],
+  },
 ]

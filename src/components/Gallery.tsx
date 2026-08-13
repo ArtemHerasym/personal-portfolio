@@ -5,6 +5,7 @@ import { motionDuration, motionEase } from '../motion'
 import type { Certificate, Project, Transition } from '../types'
 import { Modal } from './Modal'
 import { Reveal } from './Reveal'
+import { SkillIcon } from './SkillIcon'
 
 const galleryTabs = ['Projects', 'Certificates', 'Skills'] as const
 type Tab = (typeof galleryTabs)[number]
@@ -151,7 +152,14 @@ export function Gallery({ transition }: { transition: Transition }) {
                       transition={itemTransition(index)}
                     >
                       <h3>{group.name}</h3>
-                      <div>{group.skills.map((skill) => <span key={skill}>{skill}</span>)}</div>
+                      <div>
+                        {group.skills.map((skill) => (
+                          <span className="skill-item" key={skill.name}>
+                            <SkillIcon name={skill.icon} />
+                            <span className="skill-label">{skill.name}</span>
+                          </span>
+                        ))}
+                      </div>
                     </motion.div>
                   ))}
                 </div>

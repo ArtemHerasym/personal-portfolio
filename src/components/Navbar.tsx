@@ -13,7 +13,7 @@ export function Navbar({
   activeSection: string
   theme: Theme
   onNavigate: (section: string) => void
-  onThemeChange: () => void
+  onThemeChange: (origin: { x: number; y: number }) => void
 }) {
   const reduceMotion = useReducedMotion()
 
@@ -56,7 +56,18 @@ export function Navbar({
             )
           })}
         </div>
-        <button type="button" className="theme-toggle" onClick={onThemeChange} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+        <button
+          type="button"
+          className="theme-toggle"
+          onClick={(event) => {
+            const bounds = event.currentTarget.getBoundingClientRect()
+            onThemeChange({
+              x: bounds.left + bounds.width / 2,
+              y: bounds.top + bounds.height / 2,
+            })
+          }}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+        >
           <span aria-hidden="true">{theme === 'dark' ? '☼' : '◐'}</span>
         </button>
       </nav>

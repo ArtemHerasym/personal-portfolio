@@ -1,5 +1,6 @@
-import { motion, useReducedMotion } from 'motion/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useReducedMotion } from 'motion/react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { About } from './components/About'
 import { Contact } from './components/Contact'
 import { ExperienceCarousel } from './components/ExperienceCarousel'
@@ -10,6 +11,20 @@ import { motionDuration, motionEase } from './motion'
 import type { Theme } from './types'
 
 const sections = ['home', 'about', 'experience', 'gallery', 'contact'] as const
+
+type ThemeTransitionOrigin = {
+  x: number
+  y: number
+}
+
+type NativeViewTransition = {
+  ready: Promise<void>
+  finished: Promise<void>
+}
+
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (update: () => void) => NativeViewTransition
+}
 
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'dark'
@@ -27,6 +42,7 @@ function App() {
   const reduceMotion = useReducedMotion()
   const pendingSection = useRef<string | null>(null)
   const pendingTimer = useRef<number | null>(null)
+  const themeTransitionRunning = useRef(false)
 
   const findCurrentSection = useCallback(() => {
     const atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
@@ -50,7 +66,7 @@ function App() {
     }, 1400)
   }, [findCurrentSection])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme
     try {
       window.localStorage.setItem('portfolio-theme', theme)
@@ -62,6 +78,63 @@ function App() {
       theme === 'dark' ? '#04050b' : '#f8f5e6',
     )
   }, [theme])
+
+  const handleThemeChange = useCallback((origin: ThemeTransitionOrigin) => {
+    if (themeTransitionRunning.current) return
+
+    const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark'
+    const commitTheme = () => {
+      flushSync(() => setTheme(nextTheme))
+    }
+    const prefersReducedMotion = reduceMotion
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const transitionDocument = document as ViewTransitionDocument
+
+    if (prefersReducedMotion || !transitionDocument.startViewTransition) {
+      commitTheme()
+      return
+    }
+
+    themeTransitionRunning.current = true
+    document.documentElement.classList.add('theme-view-transition')
+
+    let viewTransition: NativeViewTransition
+    try {
+      viewTransition = transitionDocument.startViewTransition(commitTheme)
+    } catch {
+      document.documentElement.classList.remove('theme-view-transition')
+      themeTransitionRunning.current = false
+      commitTheme()
+      return
+    }
+
+    void viewTransition.ready.then(() => {
+      const radius = Math.hypot(
+        Math.max(origin.x, window.innerWidth - origin.x),
+        Math.max(origin.y, window.innerHeight - origin.y),
+      )
+
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${origin.x}px ${origin.y}px)`,
+            `circle(${radius}px at ${origin.x}px ${origin.y}px)`,
+          ],
+        },
+        {
+          duration: motionDuration.theme * 1000,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        } as KeyframeAnimationOptions & { pseudoElement: string },
+      )
+    }).catch(() => undefined)
+
+    const finishTransition = () => {
+      document.documentElement.classList.remove('theme-view-transition')
+      themeTransitionRunning.current = false
+    }
+    void viewTransition.finished.then(finishTransition, finishTransition)
+  }, [reduceMotion, theme])
 
   useEffect(() => {
     let frame = 0
@@ -110,18 +183,13 @@ function App() {
   )
 
   return (
-    <motion.div
-      className="site-shell"
-      initial={{ opacity: 0.82 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: reduceMotion ? 0 : 0.28 }}
-    >
+    <div className="site-shell">
       <a className="skip-link" href="#about">Skip to content</a>
       <Navbar
         activeSection={activeSection}
         theme={theme}
         onNavigate={handleNavigate}
-        onThemeChange={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
+        onThemeChange={handleThemeChange}
       />
       <main>
         <Hero transition={transition} />
@@ -130,7 +198,7 @@ function App() {
         <Gallery transition={transition} />
       </main>
       <Contact transition={transition} />
-    </motion.div>
+    </div>
   )
 }
 

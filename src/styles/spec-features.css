@@ -1,0 +1,209 @@
+/* Skills: compact, content-led rows with monochrome official glyphs. */
+.skill-row .skill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  color: var(--muted);
+  background: var(--surface-control);
+  border-radius: 7px;
+  font-size: 0.78rem;
+}
+
+.skill-row .skill-label {
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border-radius: 0;
+  font: inherit;
+}
+
+.skill-icon {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  color: var(--text-soft);
+  opacity: 0.88;
+}
+
+.skill-icon-brand {
+  fill: currentColor;
+}
+
+.skill-icon-lucide {
+  fill: none;
+  stroke: currentColor;
+}
+
+/* Project media carousel: a stable viewport ready for future real images. */
+.project-media-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+
+.project-media-viewport:active {
+  cursor: grabbing;
+}
+
+.project-media-slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+}
+
+.project-media-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.project-media-placeholder {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 72px 28px 82px;
+  color: rgba(245, 242, 234, 0.5);
+}
+
+.project-media-placeholder p {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+
+.project-media-label {
+  position: absolute;
+  top: 25px;
+  left: 26px;
+  color: rgba(245, 242, 234, 0.58);
+  font-size: 0.69rem;
+  letter-spacing: 0.01em;
+}
+
+.project-media-controls {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  left: 22px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  pointer-events: none;
+}
+
+.project-media-arrow,
+.project-media-dot {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.project-media-arrow {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(245, 242, 234, 0.18);
+  border-radius: 50%;
+  color: rgba(245, 242, 234, 0.86);
+  background: rgba(4, 5, 11, 0.38);
+  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.project-media-arrow:hover {
+  border-color: rgba(245, 242, 234, 0.3);
+  color: #f5f2ea;
+  background: rgba(4, 5, 11, 0.56);
+  transform: translateY(-1px);
+}
+
+.project-media-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.project-media-dot {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.project-media-dot::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(245, 242, 234, 0.38);
+  content: '';
+  transform: translate(-50%, -50%);
+  transition:
+    width var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.project-media-dot:hover::after {
+  background: rgba(245, 242, 234, 0.7);
+}
+
+.project-media-dot.active::after {
+  width: 15px;
+  background: rgba(245, 242, 234, 0.92);
+}
+
+.project-media-arrow:focus-visible,
+.project-media-dot:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .project-media-placeholder {
+    padding: 62px 20px 72px;
+  }
+
+  .project-media-label {
+    top: 22px;
+    left: 22px;
+  }
+
+  .project-media-controls {
+    right: 18px;
+    bottom: 16px;
+    left: 18px;
+  }
+
+  .project-media-arrow {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-media-arrow,
+  .project-media-dot::after {
+    transition: none;
+  }
+}
